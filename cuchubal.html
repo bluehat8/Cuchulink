@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Cuchulink</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/cuchubal.css">
+
+</head>
+<body>
+    <div class="background">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    <div class="options">
+        <div class="container">
+            <div class="panel">
+              <div class="button-container">
+                <button id="btnCrearCuchubal">Crear Cuchubal</button>
+                <button id="btnUnirseCuchubal">Unirse a Cuchubal</button>
+                <button id="btnVerMisCuchubales">Ver Mis Cuchubales</button>
+              </div>
+            </div>
+          </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('btnCrearCuchubal').addEventListener('click', () => {
+            window.location.href = 'create-cuchubal.html';
+        });
+
+        document.getElementById('btnVerMisCuchubales').addEventListener('click', () => {
+            window.location.href = 'view-cuchubal.html'; 
+        });
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuchubal Project</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<style>
+    body{
+        background-color: #080710;
+    }
+    input{
+
+        background-color: rgba(255,255,255,0.07) !important;
+        color: #fff !important;
+    }
+    select{
+        color: #080710 !important;
+    }
+    label{
+        color: #fff;
+    }
+
+    ::placeholder{
+    color: #e5e5e5;
+    }
+
+    form {
+        height: 550px;
+        width: 700px;
+        background-color: rgba(255,255,255,0.13);
+        position: absolute;
+        transform: translate(-50%,-50%);
+        top: 50%;
+        left: 50%;
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255,255,255,0.1);
+        box-shadow: 0 0 40px rgba(8,7,16,0.6);
+        padding: 50px 35px;
+    }
+
+    button {
+        margin-top: 50px;
+        padding: 0.5em 2em;
+        border: transparent;
+        box-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+        background: dodgerblue;
+        color: white;
+        border-radius: 4px;
+    }
+
+    button:hover {
+        background: rgb(2,0,36);
+        background: linear-gradient(90deg, rgba(30,144,255,1) 0%, rgba(0,212,255,1) 100%);
+    }
+
+    button:active {
+        transform: translate(0em, 0.2em);
+    }
+   
+</style>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center text-white">Cuchulink</h1>
+        <form id="createCuchubalForm" class="mt-4">
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="startDate">Fecha de Inicio:</label>
+              <input type="date" class="form-control" id="startDate" name="startDate" required>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="contributionAmount">Monto de Contribución (ETH):</label>
+              <input type="number" class="form-control" id="contributionAmount" name="contributionAmount" step="0.01" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="frequency">Frecuencia de Contribuciones:</label>
+              <select class="form-control" id="frequency" name="frequency" required>
+                <option value="86400">Diaria</option>
+                <option value="604800">Semanal</option>
+                <option value="2628000">Mensual</option>
+              </select>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="participantCount">Cantidad de Participantes:</label>
+              <input type="number" class="form-control" id="participantCount" name="participantCount" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="name">Nombre del Cuchubal:</label>
+              <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="endDate">Fecha de Finalización:</label>
+              <input type="date" class="form-control" id="endDate" name="endDate" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="penaltyPercentage">Penalización (%):</label>
+              <input type="number" class="form-control" id="penaltyPercentage" name="penaltyPercentage" required>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="penaltyQuotaPercentage"> Cuotas pendientes para penalización (%):</label>
+              <input type="number" class="form-control" id="penaltyQuotaPercentage" name="penaltyQuotaPercentage" required>
+            </div>
+          </div>
+          <button type="button" id="createCuchubalBtn" class="btn btn-primary btn-block">Crear Cuchubal</button>
+        </form>
+
+      </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.7.4/dist/web3.min.js"></script>
+
+
+  <script>
+    const web3 = new Web3(Web3.givenProvider || 'https://sepolia-rpc.scroll.io/');
+
+    const cuchubalFactoryAbi = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"creator","type":"address"},{"indexed":true,"internalType":"address","name":"cuchubalAddress","type":"address"},{"indexed":false,"internalType":"uint256","name":"startDate","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"contributionAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"frequency","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"participantCount","type":"uint256"},{"indexed":false,"internalType":"string","name":"name","type":"string"},{"indexed":false,"internalType":"uint256","name":"endDate","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"penaltyPercentage","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"penaltyQuotaPercentage","type":"uint256"}],"name":"CuchubalCreated","type":"event"},{"inputs":[{"internalType":"uint256","name":"startDate","type":"uint256"},{"internalType":"uint256","name":"contributionAmount","type":"uint256"},{"internalType":"uint256","name":"frequency","type":"uint256"},{"internalType":"uint256","name":"participantCount","type":"uint256"},{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"endDate","type":"uint256"},{"internalType":"uint256","name":"penaltyPercentage","type":"uint256"},{"internalType":"uint256","name":"penaltyQuotaPercentage","type":"uint256"}],"name":"createCuchubal","outputs":[],"stateMutability":"nonpayable","type":"function"}];
+    const cuchubalFactoryAddress = '0x85B9ED5e6c05EB910d359ef93A9DB6eDE10cF92a';
+    const cuchubalFactory = new web3.eth.Contract(cuchubalFactoryAbi, cuchubalFactoryAddress);
+
+    const createCuchubal = async () => {
+        try {
+            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+            console.log('Available accounts:', accounts);
+            const creator = accounts[0];
+
+            // Convert dates to timestamps in seconds
+            const startDate = Math.floor(new Date(document.getElementById('startDate').value).getTime() / 1000);
+            const contributionAmount = web3.utils.toWei(document.getElementById('contributionAmount').value, 'ether');
+            const frequency = document.getElementById('frequency').value;
+            const participantCount = document.getElementById('participantCount').value;
+            const name = document.getElementById('name').value;
+            const endDate = Math.floor(new Date(document.getElementById('endDate').value).getTime() / 1000);
+            const penaltyPercentage = document.getElementById('penaltyPercentage').value;
+            const penaltyQuotaPercentage = document.getElementById('penaltyQuotaPercentage').value;
+
+            await cuchubalFactory.methods.createCuchubal(
+                startDate,
+                contributionAmount,
+                frequency,
+                participantCount,
+                name,
+                endDate,
+                penaltyPercentage,
+                penaltyQuotaPercentage
+            ).send({ from: creator });
+
+            alert('Cuchubal creado con éxito!');
+        } catch (error) {
+            console.error('Error creando el Cuchubal:', error);
+            alert('Error creando el Cuchubal. Ver consola para más detalles.');
+        }
+    };
+
+    document.getElementById('createCuchubalBtn').addEventListener('click', createCuchubal);
+
+  </script>
+
+
+</body>
+</html>
