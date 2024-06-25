@@ -7,127 +7,99 @@
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-
 <style>
-
-    body{
+    body {
         background-color: #080710;
     }
-
-
     .glassmorphism {
-      background-color: rgba(255,255,255,0.13);
-      border: 2px solid rgba(255,255,255,0.1);
-      box-shadow: 0 0 40px rgba(8,7,16,0.6);
-      backdrop-filter: blur(10px);
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 20px;
-      color: #e4e4e4;
+        background-color: rgba(255,255,255,0.13);
+        border: 2px solid rgba(255,255,255,0.1);
+        box-shadow: 0 0 40px rgba(8,7,16,0.6);
+        backdrop-filter: blur(10px);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        color: #e4e4e4;
     }
-
     .card-body {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
     .card-text {
-      margin-bottom: 0;
-      font-size: 0.9rem;
+        margin-bottom: 0;
+        font-size: 0.9rem;
     }
     .arrow-link {
-      font-size: 2rem;
-      color: rgb(255, 255, 255);
-      text-decoration: none;
+        font-size: 2rem;
+        color: rgb(255, 255, 255);
+        text-decoration: none;
     }
-
 </style>
 
 <body>
     <div class="container mt-5">
         <h1 class="text-center text-white">Mis cuchubales</h1>
-       
+        <div id="cuchubalCardContainer" class="mt-4" style="display: none;"></div>
+    </div>
 
-        <div id="cuchubalCardContainer" class="mt-4" style="display: none;">
-        </div>
-  
-      </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.4/dist/web3.min.js"></script>
 
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/web3@1.7.4/dist/web3.min.js"></script>
+    <script>
+        const web3 = new Web3(Web3.givenProvider || 'https://sepolia-rpc.scroll.io/');
+        const cuchubalFactoryAbi = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"creator","type":"address"},{"indexed":true,"internalType":"address","name":"cuchubalAddress","type":"address"},{"indexed":false,"internalType":"uint256","name":"startDate","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"contributionAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"participantCount","type":"uint256"},{"indexed":false,"internalType":"string","name":"name","type":"string"},{"indexed":false,"internalType":"uint256","name":"endDate","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"penaltyPercentage","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"penaltyQuotaPercentage","type":"uint256"}],"name":"CuchubalCreated","type":"event"},{"inputs":[{"internalType":"uint256","name":"startDate","type":"uint256"},{"internalType":"uint256","name":"contributionAmount","type":"uint256"},{"internalType":"uint256","name":"participantCount","type":"uint256"},{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"penaltyPercentage","type":"uint256"},{"internalType":"uint256","name":"penaltyQuotaPercentage","type":"uint256"}],"name":"createCuchubal","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"cuchubalesByCreator","outputs":[{"internalType":"address","name":"cuchubalAddress","type":"address"},{"internalType":"uint256","name":"startDate","type":"uint256"},{"internalType":"uint256","name":"contributionAmount","type":"uint256"},{"internalType":"uint256","name":"participantCount","type":"uint256"},{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"endDate","type":"uint256"},{"internalType":"uint256","name":"penaltyPercentage","type":"uint256"},{"internalType":"uint256","name":"penaltyQuotaPercentage","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"creator","type":"address"}],"name":"getCuchubalesByCreator","outputs":[{"components":[{"internalType":"address","name":"cuchubalAddress","type":"address"},{"internalType":"uint256","name":"startDate","type":"uint256"},{"internalType":"uint256","name":"contributionAmount","type":"uint256"},{"internalType":"uint256","name":"participantCount","type":"uint256"},{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"endDate","type":"uint256"},{"internalType":"uint256","name":"penaltyPercentage","type":"uint256"},{"internalType":"uint256","name":"penaltyQuotaPercentage","type":"uint256"}],"internalType":"struct CuchubalFactory.CuchubalInfo[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"}];
+        const cuchubalFactoryAddress = '0x98F13bE6755040FF36E3d8add78FA33107e8f4e0';
+        const cuchubalFactory = new web3.eth.Contract(cuchubalFactoryAbi, cuchubalFactoryAddress);
 
-  <script>
-    const web3 = new Web3(Web3.givenProvider || 'https://sepolia-rpc.scroll.io/');
+        const viewCuchubales = async () => {
+            try {
+                const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                const creator = accounts[0];
 
-    const cuchubalFactoryAbi = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"creator","type":"address"},{"indexed":true,"internalType":"address","name":"cuchubalAddress","type":"address"},{"indexed":false,"internalType":"uint256","name":"startDate","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"contributionAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"frequency","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"participantCount","type":"uint256"},{"indexed":false,"internalType":"string","name":"name","type":"string"},{"indexed":false,"internalType":"uint256","name":"endDate","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"penaltyPercentage","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"penaltyQuotaPercentage","type":"uint256"}],"name":"CuchubalCreated","type":"event"},{"inputs":[{"internalType":"uint256","name":"startDate","type":"uint256"},{"internalType":"uint256","name":"contributionAmount","type":"uint256"},{"internalType":"uint256","name":"frequency","type":"uint256"},{"internalType":"uint256","name":"participantCount","type":"uint256"},{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"endDate","type":"uint256"},{"internalType":"uint256","name":"penaltyPercentage","type":"uint256"},{"internalType":"uint256","name":"penaltyQuotaPercentage","type":"uint256"}],"name":"createCuchubal","outputs":[],"stateMutability":"nonpayable","type":"function"}];
-    const cuchubalFactoryAddress = '0x85B9ED5e6c05EB910d359ef93A9DB6eDE10cF92a';
-    const cuchubalFactory = new web3.eth.Contract(cuchubalFactoryAbi, cuchubalFactoryAddress);
+                const cuchubales = await cuchubalFactory.methods.getCuchubalesByCreator(creator).call();
 
-    //Ver cuchubales
-    const viewCuchubales = async () => {
-
-          try {
-              const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-              console.log('Available accounts:', accounts);
-
-              const creator = accounts[0];
-
-              const events = await cuchubalFactory.getPastEvents('CuchubalCreated', {
-                filter: {creator: creator},
-                fromBlock: 4712614,
-                toBlock: 'latest',
-
-              });
-
-              console.log('Events:', events);
-              
-              const cardContainer = document.getElementById('cuchubalCardContainer');
+                const cardContainer = document.getElementById('cuchubalCardContainer');
                 cardContainer.innerHTML = '';
 
-                events.forEach(event => {
-                const startDate = new Date(event.returnValues.startDate * 1000).toLocaleDateString();
-                const contributionAmount = web3.utils.fromWei(event.returnValues.contributionAmount, 'ether');
-                const frequency = event.returnValues.frequency === '86400' ? 'Diaria' : event.returnValues.frequency === '604800' ? 'Semanal' : 'Mensual';
-                const participantCount = event.returnValues.participantCount;
-                const name = event.returnValues.name;
-                const endDate = new Date(event.returnValues.endDate * 1000).toLocaleDateString();
-                const penaltyPercentage = event.returnValues.penaltyPercentage;
-                const penaltyQuotaPercentage = event.returnValues.penaltyQuotaPercentage;
+                cuchubales.forEach(cuchubal => {
+                    const startDate = new Date(cuchubal.startDate * 1000).toLocaleDateString();
+                    const endDate = new Date(cuchubal.endDate * 1000).toLocaleDateString();
+                    const contributionAmount = web3.utils.fromWei(cuchubal.contributionAmount, 'ether');
+                    const participantCount = cuchubal.participantCount;
+                    const name = cuchubal.name;
+                    const penaltyPercentage = cuchubal.penaltyPercentage;
+                    const penaltyQuotaPercentage = cuchubal.penaltyQuotaPercentage;
 
-                const cardHtml = `
-                    <div class="card glassmorphism">
-                    <div class="card-body">
-                        <div>
-                        <h5 class="card-title">${name}</h5>
-                        <p class="card-text">Inicio: ${startDate}</p>
-                        <p class="card-text">Contribución: ${contributionAmount} ETH</p>
-                        <p class="card-text">Frecuencia: ${frequency}</p>
-                        <p class="card-text">Participantes: ${participantCount}</p>
-                        <p class="card-text">Finalización: ${endDate}</p>
-                        <p class="card-text">Penalización: ${penaltyPercentage}%</p>
-                        <p class="card-text">Cuotas Pendientes: ${penaltyQuotaPercentage}%</p>
+                    const cardHtml = `
+                        <div class="card glassmorphism">
+                            <div class="card-body">
+                                <div>
+                                    <h5 class="card-title">${name}</h5>
+                                    <p class="card-text">Inicio: ${startDate}</p>
+                                    <p class="card-text">Contribución: ${contributionAmount} ETH</p>
+                                    <p class="card-text">Participantes: ${participantCount}</p>
+                                    <p class="card-text">Penalización: ${penaltyPercentage}%</p>
+                                    <p class="card-text">Cuotas Pendientes: ${penaltyQuotaPercentage}%</p>
+                                    <p class="card-text">Inicio: ${endDate}</p>
+                                </div>
+                                <a href="#" class="arrow-link">&rarr;</a>
+                            </div>
                         </div>
-                        <a href="#" class="arrow-link">&rarr;</a>
-                    </div>
-                    </div>
-                `;
+                    `;
 
-                cardContainer.innerHTML += cardHtml;
-            });
+                    cardContainer.innerHTML += cardHtml;
+                });
 
-            document.getElementById('cuchubalCardContainer').style.display = 'block';
-          } catch (error) {
-              console.error('Error obteniendo los Cuchubales:', error);
-              alert('Error obteniendo los Cuchubales. Ver consola para más detalles.');
-          }
-      };
-    //End cuchubales
-    // document.getElementById('createCuchubalBtn').addEventListener('click', createCuchubal);
-    // document.getElementById('viewCuchubalesBtn').addEventListener('click', viewCuchubales);
+                document.getElementById('cuchubalCardContainer').style.display = 'block';
+            } catch (error) {
+                console.error('Error obteniendo los Cuchubales:', error);
+                alert('Error obteniendo los Cuchubales. Ver consola para más detalles.');
+            }
+        };
 
-    viewCuchubales();
-
-  </script>
+        viewCuchubales();
+    </script>
 </body>
 </html>
