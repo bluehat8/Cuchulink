@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuchulink</title>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<style>
+  body {
+      font-family: Arial, sans-serif;
+  }
+
+  .container {
+      width: 50%;
+      margin: 0 auto;
+  }
+
+  form {
+      margin-bottom: 20px;
+  }
+
+  label {
+      display: block;
+      margin-top: 10px;
+  }
+
+  input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+  }
+
+  button {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+  }
+
+  button:hover {
+      background-color: #45a049;
+  }
+
+  ul {
+      list-style-type: none;
+      padding: 0;
+  }
+
+</style>
+
+<body>
+    <div class="container">
+        <h1>Cuchulink</h1>
+        <div>
+            <h2>Crear Cuchubal</h2>
+            <form id="createCuchubalForm">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" required><br>
+                <label for="montoTotal">Monto Total:</label>
+                <input type="number" id="montoTotal" required><br>
+                <label for="fechaInicio">Fecha de Inicio:</label>
+                <input type="date" id="fechaInicio" required><br>
+                <label for="numParticipantes">Número de Participantes:</label>
+                <input type="number" id="numParticipantes" required><br>
+                <label for="codigo">Código:</label>
+                <input type="text" id="codigo" required><br>
+                <button type="submit">Crear</button>
+            </form>
+        </div>
+        <div>
+            <h2>Mis Cuchubales</h2>
+            <ul id="cuchubalList"></ul>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.4/dist/web3.min.js"></script>
+
+    <script>
+      const web3 = new Web3(Web3.givenProvider || 'https://sepolia-rpc.scroll.io/');
+      const contractAddress = '0x6e72F3E8DE5d7c72f6ada1c7c47AF9F4C89268e7';
+
+
+      async function loadABI() {
+          const response = await fetch('CuchulinkABI.json');
+          return await response.json();
+      }
+
+      let contractABI;
+      let contract;
+
+      async function init() {
+          contractABI = await loadABI();
+          contract = new web3.eth.Contract(contractABI, contractAddress);
+
+          document.getElementById('createCuchubalForm').addEventListener('submit', async (e) => {
+              e.preventDefault();
+              await createCuchubal();
+          });
+
+          await loadMyCuchubales();
+      }
+
+      async function createCuchubal() {
+          const nombre = document.getElementById('nombre').value;
+          const montoTotal = document.getElementById('montoTotal').value;
+          const fechaInicio = new Date(document.getElementById('fechaInicio').value).getTime() / 1000;
+          const numParticipantes = document.getElementById('numParticipantes').value;
+          const codigo = document.getElementById('codigo').value;
+
+          const accounts = await web3.eth.getAccounts();
+          const account = accounts[0];
+
+          contract.methods.createCuchubal(nombre, montoTotal, fechaInicio, numParticipantes, codigo)
+              .send({ from: account })
+              .on('receipt', function(receipt) {
+                  console.log('Cuchubal creado:', receipt);
+                  loadMyCuchubales(); 
+              })
+              .on('error', function(error) {
+                  console.error(error);
+              });
+      }
+
+      async function loadMyCuchubales() {
+        const accounts = await web3.eth.getAccounts();
+        const account = accounts[0];
+
+        const cuchubales = await contract.methods.getCuchubalesByCreator(account).call();
+        const cuchubalList = document.getElementById('cuchubalList');
+        cuchubalList.innerHTML = '';
+
+        for (const codigo of cuchubales) {
+            const cuchubalInfo = await contract.methods.getCuchubalInfo(codigo).call();
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+                <strong>Nombre:</strong> ${cuchubalInfo.nombre} <br>
+                <strong>Código:</strong> ${codigo} <br>
+                <strong>Participantes:</strong> ${cuchubalInfo.numParticipantes} <br>
+                <strong>Monto Total:</strong> ${cuchubalInfo.montoTotal} <br>
+                <strong>Monto por Ronda:</strong> ${cuchubalInfo.montoPorRonda} <br>
+                <strong>Fecha de Inicio:</strong> ${new Date(cuchubalInfo.fechaInicio * 1000).toLocaleDateString()} <br>
+                <strong>Fecha de Finalización:</strong> ${new Date(cuchubalInfo.fechaFinalizacion * 1000).toLocaleDateString()} <br>
+                <strong>Participantes Actuales:</strong> ${cuchubalInfo.participantesActuales} <br>
+                <strong>Ronda Actual:</strong> ${cuchubalInfo.rondaActual} <br>
+            `;
+            cuchubalList.appendChild(listItem);
+        }
+    }
+
+
+      window.addEventListener('load', init);
+
+
+    </script>
+</body>
+</html>

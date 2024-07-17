@@ -84,6 +84,7 @@
                                     <p class="card-text">Cuotas Pendientes: ${penaltyQuotaPercentage}%</p>
                                     <p class="card-text">Inicio: ${endDate}</p>
                                 </div>
+                                 <button class="btn btn-primary invite-btn" data-address="${cuchubal.cuchubalAddress}">Invitar Participante</button>
                                 <a href="#" class="arrow-link">&rarr;</a>
                             </div>
                         </div>
@@ -100,6 +101,35 @@
         };
 
         viewCuchubales();
+
+
+        document.addEventListener('click', async (event) => {
+        if (event.target.classList.contains('invite-btn')) {
+            const cuchubalAddress = event.target.getAttribute('data-address');
+            const participantAddress = prompt('Ingrese la dirección del participante:');
+
+            if (participantAddress) {
+                try {
+                    const cuchubalAbi = [{"inputs":[{"internalType":"address","name":"_creator","type":"address"},{"internalType":"uint256","name":"_startDate","type":"uint256"},{"internalType":"uint256","name":"_contributionAmount","type":"uint256"},{"internalType":"uint256","name":"_participantCount","type":"uint256"},{"internalType":"string","name":"_name","type":"string"},{"internalType":"uint256","name":"_penaltyPercentage","type":"uint256"},{"internalType":"uint256","name":"_penaltyQuotaPercentage","type":"uint256"},{"internalType":"uint256","name":"_totalContributionsRequired","type":"uint256"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"participant","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"ContributionMade","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"participant","type":"address"}],"name":"ParticipantAccepted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"participant","type":"address"}],"name":"ParticipantInvited","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"participant","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"PenaltyApplied","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"participant","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"RewardDistributed","type":"event"},{"inputs":[],"name":"acceptInvitation","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"codeGenerated","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"contributionAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"contributions","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"creator","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"endDate","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"invitationCode","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"invitations","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"participant","type":"address"}],"name":"inviteParticipant","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"isParticipant","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"lastContributionTime","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"makeContribution","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"minimumQuota","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"participantContributions","outputs":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"participantCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"participants","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"penaltyPercentage","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"penaltyQuotaPercentage","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"startDate","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalContributionsRequired","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"viewContributionStatus","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"participant","type":"address"},{"internalType":"address","name":"cuchubalAddress","type":"address"}],"name":"viewParticipantSummary","outputs":[{"components":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"internalType":"struct Cuchubal.Contribution[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"}]
+                    const cuchubal = new web3.eth.Contract(cuchubalAbi, cuchubalAddress);
+
+                    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                    const sender = accounts[0];
+
+                    await cuchubal.methods.inviteParticipant(participantAddress).send({ from: sender });
+                    alert('Participante invitado con éxito');
+                } catch (error) {
+                    console.error('Error invitando participante:', error);
+                    alert('Error invitando participante. Ver consola para más detalles.');
+                }
+            }
+        }
+    });
     </script>
+
+
+<script>
+
+</script>
 </body>
 </html>

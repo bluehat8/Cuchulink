@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Cuchubal</title>
+    <style>
+        .card {
+            border: 1px solid #ccc;
+            padding: 16px;
+            margin: 16px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
+        }
+        .card h3 {
+            margin: 0 0 16px;
+        }
+        .card button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .card button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Buscar Cuchubal</h1>
+
+    <form id="searchCuchubalForm">
+        <input type="text" id="searchCodigo" placeholder="Código del Cuchubal" required>
+        <button type="submit">Buscar</button>
+    </form>
+
+    <div id="searchResult"></div>
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.4/dist/web3.min.js"></script>
+
+
+
+    <script>
+        // Configura Web3
+        const web3 = new Web3(Web3.givenProvider || 'https://sepolia-rpc.scroll.io/');
+        const contractAddress = '0x6e72F3E8DE5d7c72f6ada1c7c47AF9F4C89268e7';
+
+
+        async function loadABI() {
+            const response = await fetch('CuchulinkABI.json');
+            return await response.json();
+        }
+
+        let contractABI;
+        let contract;
+
+        async function init() {
+            contractABI = await loadABI();
+            contract = new web3.eth.Contract(contractABI, contractAddress);
+
+
+            if (document.getElementById('searchCuchubalForm')) {
+                document.getElementById('searchCuchubalForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await searchCuchubal();
+                });
+            }
+        }
+
+        async function searchCuchubal() {
+            const codigo = document.getElementById('searchCodigo').value;
+            const searchResult = document.getElementById('searchResult');
+            searchResult.innerHTML = '';
+
+            try {
+                const cuchubalInfo = await contract.methods.getCuchubalInfo(codigo).call();
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <h3>${cuchubalInfo.nombre}</h3>
+                    <p><strong>Código:</strong> ${codigo}</p>
+                    <p><strong>Participantes:</strong> ${cuchubalInfo.numParticipantes}</p>
+                    <p><strong>Monto Total:</strong> ${cuchubalInfo.montoTotal}</p>
+                    <p><strong>Monto por Ronda:</strong> ${cuchubalInfo.montoPorRonda}</p>
+                
+                    <p><strong>Participantes Actuales:</strong> ${cuchubalInfo.participantesActuales}</p>
+                    <p><strong>Ronda Actual:</strong> ${cuchubalInfo.rondaActual}</p>
+                    <button onclick="joinCuchubal('${codigo}')">Unirse</button>
+                `;
+                searchResult.appendChild(card);
+            } catch (error) {
+                console.error("Error buscando el Cuchubal:", error);
+                searchResult.innerHTML = '<p>Error buscando el Cuchubal. Asegúrese de que el código sea correcto.</p>';
+            }
+        }
+
+        async function joinCuchubal(codigo) {
+            try {
+                const accounts = await web3.eth.getAccounts();
+                const account = accounts[0]; 
+                console.log('cuentas', accounts);
+
+
+                await contract.methods.joinCuchubal(codigo)
+                    .send({ from: account })
+                    .on('receipt', function(receipt) {
+                        console.log('Unido al cuchubal:', receipt);
+                        alert('Te has unido al cuchubal');
+                    })
+                    .on('error', function(error) {
+                        console.error("Error al unirse al cuchubal:", error);
+                        alert('Error al unirse al cuchubal: ' + error.message);
+                    });
+            } catch (error) {
+                console.error("Error en joinCuchubal:", error);
+                alert('Error en joinCuchubal: ' + error.message);
+            }
+        }
+
+        window.addEventListener('load', init);
+
+    </script>
+</body>
+</html>
