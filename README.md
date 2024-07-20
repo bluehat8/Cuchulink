@@ -72,4 +72,3 @@ Para desplegar el contrato inteligente:
 
 Asegúrate de copiar la dirección del contrato desplegado y actualizarla en el archivo HTML del frontend. Así como el ABI del propio contrato desplegfado
 
----
