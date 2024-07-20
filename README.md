@@ -29,6 +29,7 @@ Cuchulink es una aplicación descentralizada (DApp) para crear y gestionar "Cuch
     Aunque el proyecto principal no requiere una instalación de dependencias específicas en el frontend, asegúrate de tener las siguientes configuraciones:
 
     - **MetaMask:** Debes tener MetaMask instalado y configurado para conectarte a la red de prueba Scroll Sepolia.
+    - **Web3js:** Debes tener el script de la librería web3js en los archivos html del proyecto
 
 3. **Obtén el ABI del contrato:**
 
@@ -42,7 +43,7 @@ Cuchulink es una aplicación descentralizada (DApp) para crear y gestionar "Cuch
     const contractAddress = '0x51061402B9C12DBf0F8efcCB46399eB4c615a65e';
     ```
 
-## Uso (NOTA, deben utilizarse los archivos del directorio V3 del proyecto)
+## Uso (NOTA: deben utilizarse los archivos del directorio V3 del proyecto)
 
 1. **Crear un Cuchubal:**
 
