@@ -70,5 +70,5 @@ Para desplegar el contrato inteligente:
 3. **Configura la red de despliegue como Scroll Sepolia.**
 4. **Despliega el contrato.**
 
-Asegúrate de copiar la dirección del contrato desplegado y actualizarla en el archivo HTML del frontend. Así como el ABI del propio contrato desplegfado
+Asegúrate de copiar la dirección del contrato desplegado y actualizarla en el archivo HTML del frontend. Así como el ABI del propio contrato desplegado
 
