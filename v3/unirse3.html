@@ -22,6 +22,7 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            margin-right: 8px;
         }
         .card button:hover {
             background-color: #0056b3;
@@ -40,14 +41,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/web3@1.7.4/dist/web3.min.js"></script>
 
-
     <script>
         // Configura Web3
         const web3 = new Web3(Web3.givenProvider || 'https://sepolia-rpc.scroll.io/');
-        const contractAddress = '0xF1fAb677cA7FCdfb561E87fc4cE79EF6986BB8C1';
+        const contractAddress = '0x4d9A442D8bcc3365c13F47aca137c1A3e502556d';
 
         async function loadABI() {
-            const response = await fetch('CuchulinkABI2.json');
+            const response = await fetch('CuchulinkABI3.json');
             return await response.json();
         }
 
@@ -84,6 +84,7 @@
                     <p><strong>Participantes Actuales:</strong> ${cuchubalInfo.participantesActuales}</p>
                     <p><strong>Ronda Actual:</strong> ${cuchubalInfo.rondaActual}</p>
                     <button onclick="joinCuchubal('${codigo}', ${cuchubalInfo.montoPorRonda})">Unirse</button>
+                    <button onclick="viewRoundHistory('${codigo}')">Ver Historial de Rondas</button>
                 `;
                 searchResult.appendChild(card);
             } catch (error) {
@@ -110,6 +111,31 @@
             } catch (error) {
                 console.error("Error en joinCuchubal:", error);
                 alert('Error en joinCuchubal: ' + error.message);
+            }
+        }
+
+        async function viewRoundHistory(codigo) {
+            try {
+                const rounds = await contract.methods.getRoundHistory(codigo).call();
+                console.log('Historial de Rondas:', rounds);
+
+                let roundHistoryHTML = '<h3>Historial de Rondas</h3><ul>';
+                rounds.forEach((round, index) => {
+                    roundHistoryHTML += `
+                        <li>
+                            <strong>Ronda ${index + 1}:</strong><br>
+                            <strong>Ganador:</strong> ${round.winner} <br>
+                            <strong>Ha Ganador:</strong> ${round.hasWinner} <br>
+                        </li>
+                    `;
+                });
+                roundHistoryHTML += '</ul>';
+
+                const searchResult = document.getElementById('searchResult');
+                searchResult.innerHTML += roundHistoryHTML;
+            } catch (error) {
+                console.error("Error en viewRoundHistory:", error);
+                alert('Error al obtener el historial de rondas: ' + error.message);
             }
         }
 
