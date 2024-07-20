@@ -14,7 +14,6 @@ Cuchulink es una aplicación descentralizada (DApp) para crear y gestionar "Cuch
 ## Requisitos
 
 - Navegador web compatible con Web3 (como MetaMask).
-- [Node.js](https://nodejs.org/) (opcional, para el desarrollo local).
 
 ## Configuración del Entorno
 
