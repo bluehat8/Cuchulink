@@ -49,6 +49,79 @@
       list-style-type: none;
       padding: 0;
   }
+
+  .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+  }
+
+  .card {
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      width: calc(33.333% - 16px); /* Ajusta el tamaño de las tarjetas */
+      box-sizing: border-box;
+      position: relative;
+  }
+
+  .card h3 {
+      margin-top: 0;
+      font-size: 1.5em;
+  }
+
+  .card p {
+      margin: 8px 0;
+      font-size: 0.9em;
+  }
+
+  .card button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      cursor: pointer;
+      margin-right: 8px;
+      font-size: 0.9em;
+  }
+
+  .card button:hover {
+      background-color: #0056b3;
+  }
+
+  .card .actions {
+      margin-top: 12px;
+  }
+
+  .card .more-info {
+      display: none;
+      margin-top: 12px;
+  }
+
+  .card .show-more {
+      background: none;
+      border: none;
+      color: #007bff;
+      cursor: pointer;
+      font-size: 0.9em;
+      display: flex;
+      align-items: center;
+  }
+
+  .card .show-more:hover {
+      text-decoration: underline;
+  }
+
+  .card .show-more .arrow {
+      margin-left: 8px;
+      transition: transform 0.3s ease;
+  }
+
+  .card .show-more.active .arrow {
+      transform: rotate(180deg);
+  }
 </style>
 
 <body>
@@ -79,7 +152,7 @@
 
     <script>
       const web3 = new Web3(Web3.givenProvider || 'https://sepolia-rpc.scroll.io/');
-      const contractAddress = '0x4d9A442D8bcc3365c13F47aca137c1A3e502556d';
+      const contractAddress = '0x51061402B9C12DBf0F8efcCB46399eB4c615a65e';
 
       async function loadABI() {
           const response = await fetch('CuchulinkABI3.json');
@@ -150,6 +223,8 @@
               cuchubalList.appendChild(listItem);
           }
       }
+
+    
 
       async function joinCuchubal(codigo, montoPorRonda) {
           const accounts = await web3.eth.getAccounts();
