@@ -9,7 +9,7 @@ Cuchulink es una aplicación descentralizada (DApp) para crear y gestionar "Cuch
 - Consultar la lista de Cuchubales creados para posteriormente unirse a ellos.
 - Cuando un usuario se une a un cuchubal, tiene que aportar el monto de la ronda
 - Ver la lista de participantes y el historial de rondas de un Cuchubal.
-- Se muestra el ganador
+- Se muestra el ganador de las rondas en el historial (solamente cuando todos los participantes aportaron a la ronda)
 
 ## Requisitos
 
