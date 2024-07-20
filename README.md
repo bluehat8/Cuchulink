@@ -42,7 +42,7 @@ Cuchulink es una aplicación descentralizada (DApp) para crear y gestionar "Cuch
     const contractAddress = '0x51061402B9C12DBf0F8efcCB46399eB4c615a65e';
     ```
 
-## Uso
+## Uso (NOTA, deben utilizarse los archivos del directorio V3 del proyecto)
 
 1. **Crear un Cuchubal:**
 
