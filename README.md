@@ -1,5 +1,8 @@
 # Cuchulink
+🏆 1er lugar en Hackathon ETH Salvador 2024
+- Mejor Dapp sobre Ethereum 
 
+Una Dapp innovadora que moderniza los tradicionales cuchubales, aprovechando la tecnología blockchain de Ethereum para proporcionar una plataforma segura, transparente y accesible para el ahorro y préstamos comunitarios.
 Cuchulink es una aplicación descentralizada (DApp) para crear y gestionar "Cuchubales" en la testnet de Scroll Sepolia. Un "Cuchubal" es una especie de grupo de ahorro donde los participantes aportan un monto total y participan en rondas para ganar el fondo acumulado. La interfaz web interactúa con un contrato inteligente desplegado en la red de prueba para facilitar la gestión de estos grupos.
 
 ## Características
